@@ -1,0 +1,141 @@
+main{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.form-container{
+    position: relative;
+    max-width: 500px;
+    width: 100%;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 10px 10px 10px rgba(0, 0, 0, 0.1);
+}
+
+
+.form-container .form{
+    padding: 30px;
+}
+
+.form-container .form .title{
+    font-size: 27px;
+    font-weight: 600;
+    position: relative;
+}
+
+.form .title::before{
+    content: '';
+    position:absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 30px;
+    background-color: #a98524;
+    border-radius: 25px;
+}
+
+.form .input-field{
+    margin-top: 30px;
+    position: relative;
+    height: 50px;
+    width: 100%;
+    margin-top: 30px;
+}
+
+.input-field input{
+    position: absolute;
+    height: 100%;
+    width: 80%;
+    padding: 0 35px;
+    border: none;
+    outline: none;
+    border-bottom: 2px solid #ccc;
+    border-top: 2px solid transparent;
+}
+
+.input-field i{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    font-size: 23px;
+}
+.input-field input:is(:focus, :valid){
+    border-bottom-color: #a98524;
+}
+.input-field input:is(:focus, :valid) ~ i{
+   color: #a98524;
+}
+.input-field i.icon{
+    left: 0;
+}
+.input-field i.showHidePw{
+    right: 0;
+    cursor: pointer;
+    padding: 10px;
+}
+
+.form .checkbox-text{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.checkbox-text .checkbox-content{
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-content input{
+    margin: 0 8px -2px 4px;
+    accent-color: #a98524;
+}
+.form .text{
+    color: #333;
+    font-size: 14px;
+}
+.form a.text{
+    color: #a98524;
+    text-decoration: none;
+}
+.form a:hover{
+    text-decoration: underline;
+}
+.form .button{
+    margin-top: 35px;
+}
+.form .button input{
+    border: none;
+    width: 100%;
+    border: 2px solid #a98524;
+    background-color: #1c1c1c;
+    letter-spacing: 1px;
+    border-radius: 30px;
+    font-size: 17px;
+    font-weight: 500;
+    cursor: pointer;
+}
+.form .button input:hover{
+    background-color: #a98524;
+    color: #fff;
+    transition: ease .5s;
+}
+.form .button input:active{
+    color:#a98524;
+    transition: ease;
+}
+.form .login-signup{
+    margin-top: 30px;
+    text-align: center;
+}
+.uppercase{
+    text-transform: uppercase;
+}
+.white-font{
+    color: #fff;
+}
+.gold-font{
+    color: #a98524;
+}

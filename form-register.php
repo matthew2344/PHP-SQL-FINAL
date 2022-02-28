@@ -30,13 +30,13 @@
             </div>
 
             <div class="input-field button">
-                <input type="button" class="uppercase gold-font" value="Login Now">
+                <input type="button" class="uppercase gold-font" value="Register Now">
             </div>
         </form>
 
         <div class="login-signup">
-            <span class="text">Not a member?
-                <a href="#" class="text login-link">Signup now</a>
+            <span class="text">Already a member?
+                <a href="#" class="text login-link">Signin now</a>
             </span>
         </div>
     </div><!-- Registration Form -->

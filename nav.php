@@ -3,7 +3,7 @@
     <div class="wrapper display-flex">
         <ul>
             <li><a href="index.php">Home</a></li>
-            <li><a href="#">Admin</a></li>
+            <li><a href="admin-login.php">Admin</a></li>
             <li><a href="#">Rooms</a></li>
             <li><a href="#">Book now</a></li>
             <li><a href="#">About us</a></li>

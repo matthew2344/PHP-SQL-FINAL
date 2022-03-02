@@ -1,16 +1,30 @@
-
-<nav class="text-center">
-    <div class="wrapper display-flex">
-        <ul>
-            <li><a href="index.php">Home</a></li>
-            <li><a href="admin-login.php">Admin</a></li>
-            <li><a href="#">Rooms</a></li>
-            <li><a href="#">Book now</a></li>
-            <li><a href="#">About us</a></li>
-            <li><a href="login.php" class="float-right">Login</a></li>
-            <li><a href="register.php" class="float-right border-right">Register</a></li>
-        </ul>
-
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+  <div class="container">
+    <a class="navbar-brand" href="#">
+      Logo
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse " id="navbarSupportedContent">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Rooms</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Blog</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Contact</a>
+        </li>
+      </ul>
     </div>
-
+  </div>
 </nav>

@@ -1,4 +1,5 @@
 <?php
+$roomdb = "room";
 include('security.php');
 include('header.php');
 ?>
@@ -22,111 +23,49 @@ include('header.php');
   </section>
   
   <section class="probootstrap-section">
+  <?php
+      $query = "SELECT * FROM $roomdb";
+      $query_run = mysqli_query($connection, $query);
+            ?>
     <div class="container">
       <div class="row">
-
+      <?php
+            if(mysqli_num_rows($query_run) > 0)        
+            {
+                while($row = mysqli_fetch_assoc($query_run))
+                {
+          ?>
+          
+          
+        <?php
+        echo '
         <div class="col-md-4 col-sm-6 col-xs-12">
           <div class="probootstrap-room">
-            <a href="#"><img src="img/img_4.jpg" alt="Free Bootstrap Template by uicookies.com" class="img-responsive"></a>
+            <a href="#"><img src="admin/upload/'.$row['image'].'" alt="Free Bootstrap Template by uicookies.com" class="img-responsive"></a>
             <div class="text">
-              <h3>Classic Room</h3>
-              <p>Starting from <strong>$29.00/Night</strong></p>
+              <h3>'.$row['type'].'</h3>
+              <p>Starting from <strong>$'.$row['price'].'/Night</strong></p>
               <div class="post-meta mb30">
                 <ul>
                   <li><span class="review-rate">4.7</span> <i class="icon-star"></i> 252 Reviews</li>
                   <li><i class="icon-user2"></i> 3 Guests</li>
                 </ul>
               </div>
-              <p><a href="#" class="btn btn-primary" role="button">Reserve now for $29.00</a></p>
+              <form action="reservation.php" method="post">
+              <p> <button  type="submit" name="book_btn" class="btn btn-primary">Reserve now for $'.$row['price'].'</button></p>
+              </form>
             </div>
           </div>
-        </div>
-        <div class="col-md-4 col-sm-6 col-xs-12">
-          <div class="probootstrap-room">
-            <a href="#"><img src="img/img_1.jpg" alt="Free Bootstrap Template by uicookies.com" class="img-responsive"></a>
-            <div class="text">
-              <h3>Grand Deluxe Room</h3>
-              <p>Starting from <strong>$29.00/Night</strong></p>
-              <div class="post-meta mb30">
-                <ul>
-                  <li><span class="review-rate">4.7</span> <i class="icon-star"></i> 252 Reviews</li>
-                  <li><i class="icon-user2"></i> 3 Guests</li>
-                </ul>
-              </div>
-              <p><a href="#" class="btn btn-primary" role="button">Reserve now for $29.00</a></p>
-            </div>
-          </div>
-        </div>
-        <div class="clearfix visible-sm-block"></div>
-        <div class="col-md-4 col-sm-6 col-xs-12">
-          <div class="probootstrap-room">
-            <a href="#"><img src="img/img_2.jpg" alt="Free Bootstrap Template by uicookies.com" class="img-responsive"></a>
-            <div class="text">
-              <h3>Ultra Superior Room</h3>
-              <p>Starting from <strong>$29.00/Night</strong></p>
-              <div class="post-meta mb30">
-                <ul>
-                  <li><span class="review-rate">4.7</span> <i class="icon-star"></i> 252 Reviews</li>
-                  <li><i class="icon-user2"></i> 3 Guests</li>
-                </ul>
-              </div>
-              <p><a href="#" class="btn btn-primary" role="button">Reserve now for $29.00</a></p>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-4 col-sm-6 col-xs-12">
-          <div class="probootstrap-room">
-            <a href="#"><img src="img/img_5.jpg" alt="Free Bootstrap Template by uicookies.com" class="img-responsive"></a>
-            <div class="text">
-              <h3>Grand Deluxe Room</h3>
-              <p>Starting from <strong>$29.00/Night</strong></p>
-              <div class="post-meta mb30">
-                <ul>
-                  <li><span class="review-rate">4.7</span> <i class="icon-star"></i> 252 Reviews</li>
-                  <li><i class="icon-user2"></i> 3 Guests</li>
-                </ul>
-              </div>
-              <p><a href="#" class="btn btn-primary" role="button">Reserve now for $29.00</a></p>
-            </div>
-          </div>
-        </div>
-        <div class="clearfix visible-sm-block"></div>
-        <div class="col-md-4 col-sm-6 col-xs-12">
-          <div class="probootstrap-room">
-            <a href="#"><img src="img/img_6.jpg" alt="Free Bootstrap Template by uicookies.com" class="img-responsive"></a>
-            <div class="text">
-              <h3>Ultra Superior Room</h3>
-              <p>Starting from <strong>$29.00/Night</strong></p>
-              <div class="post-meta mb30">
-                <ul>
-                  <li><span class="review-rate">4.7</span> <i class="icon-star"></i> 252 Reviews</li>
-                  <li><i class="icon-user2"></i> 3 Guests</li>
-                </ul>
-              </div>
-              <p><a href="#" class="btn btn-primary" role="button">Reserve now for $29.00</a></p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4 col-sm-6 col-xs-12">
-          <div class="probootstrap-room">
-            <a href="#"><img src="img/img_7.jpg" alt="Free Bootstrap Template by uicookies.com" class="img-responsive"></a>
-            <div class="text">
-              <h3>Presidential Room</h3>
-              <p>Starting from <strong>$29.00/Night</strong></p>
-              <div class="post-meta mb30">
-                <ul>
-                  <li><span class="review-rate">4.7</span> <i class="icon-star"></i> 252 Reviews</li>
-                  <li><i class="icon-user2"></i> 3 Guests</li>
-                </ul>
-              </div>
-              <p><a href="#" class="btn btn-primary" role="button">Reserve now for $29.00</a></p>
-            </div>
-          </div>
-        </div>
-        <div class="clearfix visible-sm-block"></div>
-
-      </div>
+        </div>';
+        ?>
+      <?php
+              } 
+          }
+          else {
+            echo "No Record Found";
+          }
+          ?>
+      </div> <!--ROOMS-->
 
       <div class="row">
         <div class="col-md-12 text-center">

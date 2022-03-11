@@ -4,6 +4,32 @@ $directoryURI = $_SERVER['REQUEST_URI'];
 $path = parse_url($directoryURI, PHP_URL_PATH);
 $components = explode('/', $path);
 $first_part = $components[2];
+
+$customer = "customer";
+$email = $_SESSION['cusername'];
+$connection = mysqli_connect("localhost","root","","test");
+$get_user = "SELECT * FROM $customer WHERE email='$email'";
+$get_user_run = mysqli_query($connection, $get_user);
+foreach($get_user_run as $user){
+  $userid = $user['id'];
+  $fname = $user['fname'];
+  $lname = $user['lname'];
+  $email = $user['email'];
+}
+?>
+<?php 
+  $mindate = date("Y-m-d");
+  $mintime = date("h:i");
+  $date_limit =  new DateTime($mindate);
+  $date_limit->add(new DateInterval('P2D'));
+  $date = $date_limit->format('Y-m-d');
+  $min = $date."T".$mintime;
+  
+  
+  $date_limit2 =  new DateTime($mindate);
+  $date_limit2->add(new DateInterval('P3D'));
+  $date2 = $date_limit2->format('Y-m-d');
+  $min2 = $date2."T".$mintime;
 ?>
 <html lang="en">
   <head>
@@ -43,7 +69,7 @@ $first_part = $components[2];
             <li class="hidden-xs probootstrap-logo-center">
               <a href="index.php"><img src="img/logo_md.png" class="hires" width="181" height="50" alt="Free Bootstrap Template by uicookies.com"></a>
             </li>
-            <li class="<?php if ($first_part == "reservation.html") {echo "active";} else {echo "noactive";}?>"><a href="reservation.html">Reservation</a></li>
+            <li class="<?php if ($first_part == "reservation.php") {echo "active";} else {echo "noactive";}?>"><a href="reservation.php">Reservation</a></li>
             <li class="<?php if ($first_part == "blog.html") {echo "active";} else {echo "noactive";}?>"><a href="blog.html">Blog</a></li>
             <li class="<?php if ($first_part == "contact.html") {echo "active";} else {echo "noactive";}?>"><a href="contact.html">Contact</a></li>
             <li class="visible-xs"><a href="contact.html">
@@ -62,9 +88,14 @@ $first_part = $components[2];
                 </a>
                  <!-- Dropdown - User Information -->
               <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in hidden-xs" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="#">
+                <a class="dropdown-item" href="profile.php">
                   <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                   Profile
+                </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="book.php">
+                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Reservations
                 </a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
@@ -101,7 +132,7 @@ $first_part = $components[2];
         <div class="modal-footer">
           <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
 
-          <form action="admin/logout.php" method="POST"> 
+          <form action="logout.php" method="POST"> 
           
             <button type="submit" name="logout_btn_customer" class="btn btn-primary">Logout</button>
 

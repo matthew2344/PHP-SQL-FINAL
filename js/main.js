@@ -547,7 +547,7 @@
 		inlineSVG();
 		roomFadeHover();
 		hiResImg();
-		dateTimePicker();
+		//dateTimePicker();
 	});
 
 	$(window).load(function(){

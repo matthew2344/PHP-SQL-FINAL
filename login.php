@@ -51,7 +51,7 @@ session_start();
                                             }
                                         ?>
                                     </div>
-                                    <form class="user" action="admin/logincode.php" method="post">
+                                    <form class="user" action="logincode.php" method="post">
                                         <div class="form-group">
                                             <input type="email" name="emaill" class="form-control form-control-user"
                                                 id="exampleInputEmail" aria-describedby="emailHelp"

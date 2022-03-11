@@ -51,7 +51,7 @@ session_start();
                                     }
                                 ?>
                             </div>
-                            <form class="user" method="post" action="admin/code.php">
+                            <form class="user" method="post" action="code.php">
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
                                         <input type="text"  name="fname" class="form-control form-control-user" id="exampleFirstName"

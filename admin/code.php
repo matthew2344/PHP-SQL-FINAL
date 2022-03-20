@@ -251,6 +251,32 @@ if(isset($_POST['delete_room_btn']))
 }
 
 
+if(isset($_POST['applyRoom']))
+{
+    $query = "SELECT * FROM room";
+    $query_run = mysqli_query($connection, $query);
+    if(mysqli_num_rows($query_run) > 0)
+    {
+        while($row =  mysqli_fetch_assoc($query_run))
+        {
+            $id = $row['id'];
+            $quantity = $row['quantity'];
+            for($i = 0; $i < $quantity; $i++)
+            {
+                $query_aw = "INSERT INTO room_number (room_id) VALUES ('$id')";
+                $query_aw_run = mysqli_query($connection, $query_aw);
+                if($query_aw_run)
+                {
+                    $_SESSION['status'] = "Rooms are now applied";
+                    header('Location: rooms.php'); 
+                }
+            }
+        }
+    } else
+    {
+
+    }
+}
 
 
 ?>

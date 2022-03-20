@@ -1,1 +1,55 @@
 /* Your custom css code goes here */
+
+.room-container {
+    margin: 20px 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border: 1px solid black;
+}
+
+.room {
+    background-color: #444451;
+    height: 12px;
+    width: 15px;
+    margin: 3px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.room-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.occupied {
+    background-color: #903479;
+}
+
+.room:not(.occupied):hover {
+    cursor: pointer;
+    transform: scale(1.2);
+}
+
+.showcase {
+    display: flex;
+    justify-content: center;
+    list-style-type: none;
+    background: rgba(0,0,0,0.1);
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: #777;
+    margin: 0 auto;
+}
+
+.showcase li{
+    padding: 0 50px;
+}
+
+.showcase .room:not(.occupied):hover {
+    cursor: default;
+    transform: scale(1);
+  }

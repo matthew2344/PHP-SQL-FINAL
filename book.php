@@ -4,6 +4,13 @@ include('header.php');
 ?>
 
 
+
+
+
+
+
+
+
 <section class="probootstrap-section">
     <div class="container">
       <div class="row">
@@ -36,8 +43,8 @@ include('header.php');
                     <th> Date Start </th>
                     <th> Date End </th>
                     <th> Amount Pay/night </th>
-                    <th> EDIT </th>
-                    <th> CANCEL </th>
+                    <th> CHANGE ROOM </th>
+                    <th> CANCEL ROOM </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -52,18 +59,18 @@ include('header.php');
                     <td><?php echo $row['type']; ?></td>
                     <td><?php echo $row['date_start']; ?></td>
                     <td><?php echo $row['date_end']; ?></td>
-                    <td><?php echo $row['price']; ?></td>
+                    <td>$<?php echo $row['price']; ?></td>
 
                     <td>
                         <form action="book_edit.php" method="post">
                             <input type="hidden" name="edit_reservationId" value="<?php echo $row['id']; ?>">
-                            <button  type="submit" name="reservation_edit" class="btn btn-success"> EDIT</button>
+                            <button  type="submit" name="reservation_edit" class="btn btn-success" data-toggle="modal" data-target="#changeRoom"> CHANGE ROOM</button>
                         </form>
                     </td>
                     <td>
                         <form action="code.php" method="post">
                             <input type="hidden" name="cancel_id" value="<?php echo $row['id']; ?>">
-                            <button type="submit" name="cancel_room" class="btn btn-danger"> CANCEL</button>
+                            <button type="submit" name="cancel_room" class="btn btn-danger"> CANCEL ROOM</button>  
                         </form>
                     </td>
                     </tr>
@@ -81,14 +88,14 @@ include('header.php');
         </div>
       </div>
     </div>
+
+    <div class="container">
+        <form action="pay.php" method="post">
+            <button type="submit" name="cancel_room" class="btn btn-primary">Proceed Payment</button>
+        </form>
+    </div>
+
 </section>
-
-
-
-
-
-
-
 
 
 

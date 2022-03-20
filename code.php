@@ -81,7 +81,7 @@ if(isset($_POST['submitReservation']))
     $interval = getInterval($start_date,$end_date);
     $amount_pay = $interval->days * $price;
 
-    $query = "INSERT INTO $reservation (customer_id, room_id, date_start, date_end, amount_pay) VALUES ('$customer_id','$room_id','$start_date','$end_date','$amount_pay')";
+    $query = "INSERT INTO $reservation (customer_id, room_id, date_start, date_end) VALUES ('$customer_id','$room_id','$start_date','$end_date')";
     $query_run = mysqli_query($connection, $query);
 
 
@@ -111,7 +111,7 @@ if(isset($_POST['submitReservation']))
 
     $transaction_id = strtoupper("$name$month_added$date_added$month_year-$room_name$room_trans_id");
 
-    $query = "INSERT INTO $transaction (id, reservation_id) VALUES ('$transaction_id','$reservation_id')";
+    $query = "INSERT INTO $transaction (id, reservation_id, customer_id, amount_pay) VALUES ('$transaction_id','$reservation_id','$customer_id','$amount_pay')";
     $query_run = mysqli_query($connection, $query);
     header('Location: index.php');
 }
@@ -120,60 +120,19 @@ if(isset($_POST['submitReservation']))
 if(isset($_POST['editReservation']))
 {
     $customer_id = $_POST['customer_id'];
-    $room_id = $_POST['room'];
-    $arrival = strtotime($_POST["date-start"]);
-    $departure = strtotime($_POST["date-end"]);
-    $start_date = date('Y-m-d H:i:s',$arrival);
-    $end_date = date('Y-m-d H:i:s',$departure);
     $reservation_id = $_POST['reservation_id'];
+    $room_no = $_POST['room'];
 
-
-    $get_room =  "SELECT * FROM $roomdb WHERE id = '$room_id'";
-    $get_room_run = mysqli_query($connection, $get_room);
-    foreach($get_room_run as $ro_row)
-    {
-        $room_type = $ro_row['type'];
-        $price = $ro_row['price'];
-    }
-
-    $selection = "SELECT * FROM $reservation WHERE id = '$reservation_id'";
-    $query_selection_run =  mysqli_query($connection, $selection);
-    foreach($query_selection_run as $select_row)
-    {
-        $STARTDATE = date('Y-m-d H:i:s',strtotime($select_row['date_start']));
-        $ENDDATE = date('Y-m-d H:i:s',strtotime($select_row['date_end']));
-    }
-
-    $interval = getInterval($STARTDATE,$ENDDATE);
-
-    $amount_pay = $interval->days * $price;
-
-    $query_update = "UPDATE $reservation 
-    SET room_id = '$room_id', amount_pay = '$amount_pay' WHERE id = '$reservation_id'";
-    $query_update_run = mysqli_query($connection, $query_update);
-
-    //NEW ROOM NAME
-    $room_name = strtoupper(substr($room_type,0,3));
-
-    $transaction_room = "SELECT * FROM $transaction WHERE reservation_id = '$reservation_id'";
-    $transaction_room_run = mysqli_query($connection, $transaction_room);
-    foreach($transaction_room_run as $TRANSROOM)
-    {
-        $TRANSID = $TRANSROOM['id'];
-    }
-
-    $search = substr($TRANSID,12,3);
-    $NEWTRANSID = str_replace($search,$room_name,$TRANSID);
-
-
-    $transaction_id = strtoupper($NEWTRANSID);
-    $query = "UPDATE $transaction SET id = '$transaction_id' WHERE reservation_id = '$reservation_id'";
+    $query = "SELECT * FROM transaction WHERE reservation_id = '$reservation_id'";
     $query_run = mysqli_query($connection, $query);
-    header('Location: book.php');
 
+    if($query_run)
+    {
+        $trans_row = mysqli_fetch_assoc($query_run);
+    }
+
+    
 }
-
-
 
 
 
@@ -190,17 +149,26 @@ if(isset($_POST['cancel_room']))
         $roomId = $row['room_id'];
         $dateStart = date('Y-m-d H:i:s',strtotime($row['date_start']));
         $dateEnd = date('Y-m-d H:i:s',strtotime($row['date_end']));
-        $amountPay = $row['amount_pay'];
     }
-    $today_date = date('Y-m-d H:i:s');
 
+    $query = "SELECT * FROM $roomdb WHERE id = '$roomId'";
+    $query_run= mysqli_query($connection, $query);
+    foreach($query_run as $row)
+    {
+        $amountPay = $row['price'];
+    }
+
+    $today_date = date('Y-m-d H:i:s');
+    
+    $d1 = new DateTime($today_date);
+    $d2 = new DateTime($dateEnd);
     $diff = getInterval($today_date,$dateEnd);
 
-
-    if($diff >= 5)
+    
+    if($diff->days >= 5)
     {
         $amountPay = $amountPay * .1;
-        $query = "INSERT INTO $payment (customer_id, amount) VALUES ('$custId','$amountPay')";
+        $query = "INSERT INTO penalty (customer_id, amount) VALUES ('$custId','$amountPay')";
         $query_run = mysqli_query($connection, $query);
 
         $query = "DELETE FROM $transaction WHERE reservation_id = '$id'";
@@ -222,10 +190,11 @@ if(isset($_POST['cancel_room']))
             header('Location: book.php'); 
         }    
     }
-    else if($diff > 2 && $diff < 5)
+    else if($diff->days > 2 && $diff->days < 5)
     {
         $amountPay = $amountPay * .15;
-        $query = "INSERT INTO $payment (customer_id, amount) VALUES ('$custId','$amountPay')";
+        
+        $query = "INSERT INTO penalty (customer_id, amount) VALUES ('$custId','$amountPay')";
         $query_run = mysqli_query($connection, $query);
 
         $query = "DELETE FROM $transaction WHERE reservation_id = '$id'";
@@ -247,11 +216,11 @@ if(isset($_POST['cancel_room']))
             header('Location: book.php'); 
         }    
     }
-    else if($diff <= 2)
+    else if($diff->days <= 2 && $d1 > $d2)
     {
         $amountPay = $amountPay * .2;
 
-        $query = "INSERT INTO $payment (customer_id, amount) VALUES ('$custId','$amountPay')";
+        $query = "INSERT INTO penalty (customer_id, amount) VALUES ('$custId','$amountPay')";
         $query_run = mysqli_query($connection, $query);
 
         $query = "DELETE FROM $transaction WHERE reservation_id = '$id'";
@@ -275,14 +244,131 @@ if(isset($_POST['cancel_room']))
     }
 
 
-
-
-
-
-   
 }
 
 
+if(isset($_POST['ChangeInfoBtn']))
+{
+    $fname = $_POST['fname'];
+    $lname = $_POST['lname'];
+    $email = $_POST['email'];
+    $id = $_POST['updateid'];
+
+
+    $query = "UPDATE customer SET fname='$fname', lname='$lname', email='$email' WHERE id='$id' ";
+    $query_run = mysqli_query($connection, $query);
+
+    if($query_run)
+    {
+        $_SESSION['status_common'] = "Your Data is Updated";
+        $_SESSION['status_code'] = "success";
+        header('Location: profile.php'); 
+    }
+    else
+    {
+        $_SESSION['status_common'] = "Your Data is NOT Updated";
+        $_SESSION['status_code'] = "error";
+        header('Location: profile.php'); 
+    }
+}
+
+if(isset($_POST['SaveNewPass']))
+{
+    $oldpass = $_POST['Oldpassword'];
+    $newpass = $_POST['Newpassword'];
+    $confirm = $_POST['confirmpassword'];
+    $id = $_POST['updateid'];
+
+    $query = "SELECT * FROM customer WHERE id='$id'";
+    $query_run = mysqli_query($connection, $query);
+
+    foreach($query_run as $row)
+    {
+        $password = $row['password'];
+    }
+
+    
+
+    if($oldpass === $password)
+    {
+        if($newpass === $confirm)
+        {
+            $query = "UPDATE customer SET password='$newpass' WHERE id='$id' ";
+            $query_run = mysqli_query($connection, $query);
+
+            if($query_run)
+            {
+                $_SESSION['status_password'] = "Password changed";
+                $_SESSION['status_code'] = "success";
+                session_destroy();
+                unset($_SESSION['cusername']);
+                header('Location: login.php');
+            }
+            else 
+            {
+                $_SESSION['status_password'] = "Password not Changed";
+                $_SESSION['status_code'] = "error";
+                header('Location: profile.php');  
+            }
+        }
+        else
+        {
+            $_SESSION['status_password'] = "New Password and Confirm Password Does Not Match";
+            $_SESSION['status_code'] = "warning";
+            header('Location: profile.php');
+        }
+    }
+    else
+    {
+        $_SESSION['status_password'] = "Old password and Password Does not Match";
+        $_SESSION['status_code'] = "warning";
+        header('Location: profile.php');
+    }
+
+
+}
+
+
+
+
+
+if(isset($_POST['paymentsubmit']))
+{
+    $userid = $_POST['userid'];
+
+    $amountoPay = $_POST['balance'];
+    $paymentInput = $_POST['paymentInput'];
+    
+
+    if($amountoPay === $paymentInput)
+    {
+        $query = "INSERT INTO invoice (customer_id, amount) VALUES ('$userid','$amountoPay')";
+        $query_run = mysqli_query($connection, $query);
+        $query = "DELETE FROM penalty WHERE customer_id = '$userid' ";
+        $query_run = mysqli_query($connection, $query);
+        
+        
+        if($query_run)
+        {
+            $_SESSION['status'] = "Transaction Complete";
+            $_SESSION['status_code'] = "warning";
+            header('Location: pay.php');
+        }
+        else
+        {
+            $_SESSION['status'] = "Insertion error";
+            $_SESSION['status_code'] = "warning";
+            header('Location: pay.php');
+        }
+    }
+    else
+    {
+        $_SESSION['status'] = "Incomplete transaction";
+        $_SESSION['status_code'] = "warning";
+        header('Location: pay.php');
+    }
+ 
+}
 
 
 

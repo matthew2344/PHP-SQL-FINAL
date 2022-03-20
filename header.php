@@ -30,6 +30,14 @@ foreach($get_user_run as $user){
   $date_limit2->add(new DateInterval('P3D'));
   $date2 = $date_limit2->format('Y-m-d');
   $min2 = $date2."T".$mintime;
+
+  // $query = "SELECT * FROM reservation WHERE customer_id = '$userid'";
+  // $query_run = mysqli_query($connection, $get_user);
+  // $today_date = date('Y-m-d H:i:s');
+  // foreach($query_run as $row){
+  //   $get_end = date('Y-m-d H:i:s',strtotime($select_row['date_end']));
+  // }
+  
 ?>
 <html lang="en">
   <head>
@@ -43,7 +51,7 @@ foreach($get_user_run as $user){
     <link rel="stylesheet" href="css/styles-merged.css">
     <link rel="stylesheet" href="css/style.min.css">
     <link rel="stylesheet" href="css/custom.css">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
     <!--[if lt IE 9]>
       <script src="js/vendor/html5shiv.min.js"></script>
       <script src="js/vendor/respond.min.js"></script>
@@ -95,7 +103,7 @@ foreach($get_user_run as $user){
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="book.php">
                   <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Reservations
+                  My Reservation
                 </a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
@@ -118,6 +126,8 @@ foreach($get_user_run as $user){
         </nav>
         </div>
     <!-- </div> -->
+
+    
       <!-- Logout Modal-->
   <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">

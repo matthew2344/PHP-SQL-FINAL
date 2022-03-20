@@ -129,6 +129,9 @@ include('includes/navbar.php');
   </div>
 </div>
 
+<form action="code.php" method="post">
+<button type="submit" name="applyRoom" class="btn btn-primary">Apply Room</button>
+</form>
 </div>
 <!-- /.container-fluid -->
 

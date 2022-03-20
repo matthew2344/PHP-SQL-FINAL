@@ -22,6 +22,18 @@ include('header.php');
         </li>
     </ul>
   </section>
+
+  <?php 
+    $query = "SELECT COUNT(*) AS roomCount FROM room_reserved";
+    $query_run = mysqli_query($connection,$query);
+    if($query_run)
+    {
+      $count = mysqli_fetch_assoc($query_run);
+    }
+    
+    if($count['roomCount'] < 51)
+    {
+  ?>
   
   <section class="probootstrap-section">
   <?php
@@ -86,6 +98,7 @@ include('header.php');
                   </div>
                 </div>
               </div>
+              
               <div class="col-md-6">
                 <div class="form-group">
                   <label for="children">Children</label>
@@ -103,7 +116,8 @@ include('header.php');
                 </div>
               </div>
             </div>
-            
+
+
             <div class="form-group">
               <input type="hidden" name="customer_id" value=<?php echo $userid;?>>
               <button type="submit" class="btn btn-primary btn-lg" id="submit" name="submitReservation">
@@ -114,7 +128,7 @@ include('header.php');
         </div>
 
 
-
+              
 
 
         <div class="col-md-4">
@@ -125,6 +139,14 @@ include('header.php');
       </div>
     </div>
   </section>
+
+  <?php
+    }
+    else
+    {
+      $str = "Room Max";
+    }
+  ?>
 
   <section class="probootstrap-half">
     <div class="image" style="background-image: url(img/slider_2.jpg);"></div>

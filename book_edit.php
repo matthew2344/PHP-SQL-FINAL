@@ -25,27 +25,40 @@ include('header.php');
   
   <section class="probootstrap-section">
   <?php
-      $query = "SELECT * FROM $roomdb";
-      $query_run = mysqli_query($connection, $query);
       $res_id = $_POST['edit_reservationId'];
-            ?>
+      $g = "SELECT * FROM reservation WHERE id = '$res_id'";
+      $g_run = mysqli_query($connection, $g);
+      $row = mysqli_fetch_assoc($g_run);
+      $roomID = $row['room_id'];
+      
+      $ad = "SELECT * FROM room WHERE id = '$roomID'";
+      $a_run = mysqli_query($connection, $ad);
+
+      $a = mysqli_fetch_assoc($a_run);
+      $roomType = $a['type'];
+
+      
+
+      $query = "SELECT * FROM room_number WHERE room_id = '$roomID'";
+      $query_run = mysqli_query($connection, $query);
+    ?>
     <div class="container">
       <div class="row probootstrap-gutter40">
         <div class="col-md-8">
-          <h2 class="mt0">Reservation Form</h2>
+          <h2 class="mt0">Change Room Form</h2>
           <form action="code.php" method="post" class="probootstrap-form">
             <div class="form-group">
               <label for="room">Room</label>
               <div class="form-field">
                 <i class="icon icon-chevron-down"></i>
                 <select name="room" id="room" class="form-control">
-                  <option value="">Select a Room</option>
+                  <option value="">Select a Room Number</option>
                   <?php 
                     if(mysqli_num_rows($query_run) > 0)        
                     {
                         while($row = mysqli_fetch_assoc($query_run))
                         {
-                           echo '<option value="'.$row['id'].'">'.$row['type'].'</option>';
+                           echo '<option value="'.$row['id'].'">'.$row['id'].' - '.$roomType.'</option>';
                         }
                     }
                   ?>
@@ -54,46 +67,13 @@ include('header.php');
             </div>
 
 
-            <div class="row mb30">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="adults">Adults</label>
-                  <div class="form-field">
-                    <i class="icon icon-chevron-down"></i>
-                    <select name="adults" id="adults" class="form-control">
-                      <option value="">Number of Adults</option>
-                      <option value="1">1</option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                      <option value="4">4+</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-              
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="children">Children</label>
-                  <div class="form-field">
-                    <i class="icon icon-chevron-down"></i>
-                    <select name="children" id="children" class="form-control">
-                      <option value="">Number of Children</option>
-                      <option value="1">1</option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                      <option value="4">4+</option>
-                    </select>
-                  </div>
-                  
-                </div>
-              </div>
-            </div>
+
             
             <div class="form-group">
               <input type="hidden" name="customer_id" value=<?php echo $userid;?>>
               <input type="hidden" name="reservation_id" value=<?php echo $res_id;?>>
               <button type="submit" class="btn btn-primary btn-lg" id="submit" name="editReservation">
-                Reserve
+                Change Room
               </button>
             </div>
           </form>

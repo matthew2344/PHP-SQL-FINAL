@@ -53,17 +53,18 @@ session_start();
                                     </div>
                                     <form class="user" action="logincode.php" method="post">
                                         <div class="form-group">
-                                            <input type="email" name="emaill" class="form-control form-control-user"
+                                            <input type="email" name="emaill" class="form-control form-control-user" value="<?php if(isset($_COOKIE["email"])){echo $_COOKIE['email'];}?>"
                                                 id="exampleInputEmail" aria-describedby="emailHelp"
                                                 placeholder="Enter Email Address...">
                                         </div>
                                         <div class="form-group">
-                                            <input type="password" name="passwordd" class="form-control form-control-user"
+                                            <input type="password" name="passwordd" class="form-control form-control-user" value="<?php if(isset($_COOKIE["password"])){echo $_COOKIE['password'];}?>"
                                                 id="exampleInputPassword" placeholder="Password">
                                         </div>
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox small">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck">
+                                                <input type="checkbox" class="custom-control-input" name="remember" id="customCheck"
+                                                <?php if(isset($_COOKIE["password"])){ ?> checked <?php } ?>>
                                                 <label class="custom-control-label" for="customCheck">Remember
                                                     Me</label>
                                             </div>

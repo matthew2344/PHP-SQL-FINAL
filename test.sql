@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 20, 2022 at 02:21 PM
+-- Generation Time: Mar 24, 2022 at 12:16 AM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 8.1.1
 
@@ -40,6 +40,27 @@ CREATE TABLE `admins` (
 
 INSERT INTO `admins` (`id`, `username`, `email`, `password`) VALUES
 (1, 'admin', 'admin@admin.com', '1234');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `card`
+--
+
+CREATE TABLE `card` (
+  `id` varchar(100) NOT NULL,
+  `person_name` varchar(100) NOT NULL,
+  `expiry` varchar(100) NOT NULL,
+  `cvc` int(50) NOT NULL,
+  `balance` decimal(12,0) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `card`
+--
+
+INSERT INTO `card` (`id`, `person_name`, `expiry`, `cvc`, `balance`) VALUES
+('1234 5678 435678', 'John Doe', '12/25', 123, '9855');
 
 -- --------------------------------------------------------
 
@@ -91,7 +112,8 @@ CREATE TABLE `penalty` (
 --
 
 INSERT INTO `penalty` (`id`, `customer_id`, `amount`) VALUES
-(5, 1, '7.50');
+(6, 1, '7.50'),
+(7, 1, '7.50');
 
 -- --------------------------------------------------------
 
@@ -104,15 +126,9 @@ CREATE TABLE `reservation` (
   `customer_id` int(11) NOT NULL,
   `room_id` int(11) NOT NULL,
   `date_start` datetime NOT NULL,
-  `date_end` datetime NOT NULL
+  `date_end` datetime NOT NULL,
+  `amount` decimal(12,0) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `reservation`
---
-
-INSERT INTO `reservation` (`id`, `customer_id`, `room_id`, `date_start`, `date_end`) VALUES
-(14, 1, 1, '2022-03-17 18:22:00', '2022-03-19 18:22:00');
 
 -- --------------------------------------------------------
 
@@ -199,10 +215,8 @@ INSERT INTO `room_number` (`id`, `room_id`) VALUES
 
 CREATE TABLE `room_reserved` (
   `id` int(11) NOT NULL,
-  `room_num` int(50) NOT NULL,
-  `reservation_id` int(11) NOT NULL,
-  `room_id` int(11) NOT NULL,
-  `price` decimal(12,0) NOT NULL
+  `room_number` int(11) NOT NULL,
+  `reservation_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -232,17 +246,11 @@ INSERT INTO `status` (`id`, `status`) VALUES
 
 CREATE TABLE `transaction` (
   `id` varchar(300) NOT NULL,
-  `reservation_id` int(11) NOT NULL,
-  `customer_id` int(11) NOT NULL,
+  `reservation_id` int(11) DEFAULT NULL,
+  `customer_id` int(11) DEFAULT NULL,
+  `card_id` varchar(100) NOT NULL,
   `amount_pay` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `transaction`
---
-
-INSERT INTO `transaction` (`id`, `reservation_id`, `customer_id`, `amount_pay`) VALUES
-('MAMAR150322-KIN00014', 14, 1, '100.00');
 
 --
 -- Indexes for dumped tables
@@ -252,6 +260,12 @@ INSERT INTO `transaction` (`id`, `reservation_id`, `customer_id`, `amount_pay`) 
 -- Indexes for table `admins`
 --
 ALTER TABLE `admins`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `card`
+--
+ALTER TABLE `card`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -300,8 +314,8 @@ ALTER TABLE `room_number`
 --
 ALTER TABLE `room_reserved`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `room_reserved_ibfk_1` (`reservation_id`),
-  ADD KEY `room_id` (`room_id`);
+  ADD KEY `room_number` (`room_number`),
+  ADD KEY `reservation_id` (`reservation_id`);
 
 --
 -- Indexes for table `status`
@@ -314,7 +328,9 @@ ALTER TABLE `status`
 --
 ALTER TABLE `transaction`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `reservation_id` (`reservation_id`);
+  ADD KEY `reservation_id` (`reservation_id`),
+  ADD KEY `card_id` (`card_id`),
+  ADD KEY `customer_id` (`customer_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -342,13 +358,13 @@ ALTER TABLE `invoice`
 -- AUTO_INCREMENT for table `penalty`
 --
 ALTER TABLE `penalty`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `reservation`
 --
 ALTER TABLE `reservation`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `room`
@@ -366,7 +382,7 @@ ALTER TABLE `room_number`
 -- AUTO_INCREMENT for table `room_reserved`
 --
 ALTER TABLE `room_reserved`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables
@@ -401,14 +417,16 @@ ALTER TABLE `room_number`
 -- Constraints for table `room_reserved`
 --
 ALTER TABLE `room_reserved`
-  ADD CONSTRAINT `room_reserved_ibfk_1` FOREIGN KEY (`reservation_id`) REFERENCES `reservation` (`id`),
-  ADD CONSTRAINT `room_reserved_ibfk_2` FOREIGN KEY (`room_id`) REFERENCES `room` (`id`);
+  ADD CONSTRAINT `room_reserved_ibfk_1` FOREIGN KEY (`room_number`) REFERENCES `room_number` (`id`),
+  ADD CONSTRAINT `room_reserved_ibfk_2` FOREIGN KEY (`reservation_id`) REFERENCES `reservation` (`id`);
 
 --
 -- Constraints for table `transaction`
 --
 ALTER TABLE `transaction`
-  ADD CONSTRAINT `reservation_id` FOREIGN KEY (`reservation_id`) REFERENCES `reservation` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `reservation_id` FOREIGN KEY (`reservation_id`) REFERENCES `reservation` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `transaction_ibfk_1` FOREIGN KEY (`card_id`) REFERENCES `card` (`id`),
+  ADD CONSTRAINT `transaction_ibfk_2` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

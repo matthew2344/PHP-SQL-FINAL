@@ -201,6 +201,8 @@ if(isset($_POST['rooms_updatebtn']))
     $query = "UPDATE $roomdb SET title='$edit_title', type='$edit_type', image='$image_data', description='$edit_description', quantity ='$edit_quantity',  price ='$edit_price' WHERE id='$edit_id' ";
     $query_run = mysqli_query($connection, $query);
 
+    $validate = "";
+
     if($query_run)
     {
         if($edit_image == NULL)

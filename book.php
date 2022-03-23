@@ -89,12 +89,6 @@ include('header.php');
       </div>
     </div>
 
-    <div class="container">
-        <form action="pay.php" method="post">
-            <button type="submit" name="cancel_room" class="btn btn-primary">Proceed Payment</button>
-        </form>
-    </div>
-
 </section>
 
 

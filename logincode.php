@@ -14,6 +14,16 @@ if(isset($_POST['login_btn_client']))
 
    if(mysqli_fetch_array($query_run))
    {
+        if(!empty($_POST['remember']))
+        {
+          setcookie('email',$email_login, time()+60*60*7);
+          setcookie('password',$password_login, time()+60*60*7);
+        }
+        else
+        {
+          setcookie('email',"");
+          setcookie('password',"");
+        }
         $_SESSION['cusername'] = $email_login;
         header('Location: index.php');
    }

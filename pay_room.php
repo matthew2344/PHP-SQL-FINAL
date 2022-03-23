@@ -25,19 +25,26 @@ include('header.php');
   
   <section class="probootstrap-section">
   <?php
-      $res_id = $_POST['edit_reservationId'];
-      $g = "SELECT * FROM reservation WHERE id = '$res_id'";
-      $g_run = mysqli_query($connection, $g);
-      $row = mysqli_fetch_assoc($g_run);
-      $roomID = $row['room_id'];
+
+
+      $roomID = $_SESSION['roomID'];
+      $roomstart = $_SESSION['date_start'];
+      $roomend = $_SESSION['date_end'];
+      $amount = $_SESSION['amount'];
+
+      
+
       
       $ad = "SELECT * FROM room WHERE id = '$roomID'";
       $a_run = mysqli_query($connection, $ad);
 
       $a = mysqli_fetch_assoc($a_run);
       $roomType = $a['type'];
+      $roomTitle = $a['title'];
+
 
       
+
       $query = "SELECT * FROM room_number 
       WHERE room_number.id NOT IN (SELECT room_number FROM room_reserved) 
       AND room_number.room_id = '$roomID'";
@@ -46,13 +53,14 @@ include('header.php');
     <div class="container">
       <div class="row probootstrap-gutter40">
         <div class="col-md-8">
-          <h2 class="mt0">Change Room Form</h2>
+          <h1 class="mt0">Room Type: <?php echo $roomTitle; ?></h1>
+          <h2 class="mt0">Select Room Form</h2>
           <form action="code.php" method="post" class="probootstrap-form">
             <div class="form-group">
-              <label for="room">Room</label>
+              <label for="room">Room <small style="color: red;">* Choose Room Number</small></label>
               <div class="form-field">
                 <i class="icon icon-chevron-down"></i>
-                <select name="room" id="room" class="form-control">
+                <select name="room" id="room" class="form-control" required>
                   <option value="">Select a Room Number</option>
                   <?php 
                     if(mysqli_num_rows($query_run) > 0)        
@@ -66,15 +74,80 @@ include('header.php');
                 </select>
               </div>
             </div>
+            
+            <div class="form-group">
+              <label>Person Name <small style="color: red;">* eg. John Doe</small></label>
+              <input type="text" class="form-control" name="pname" placeholder="Enter Person Name" required>
+            </div>
 
+            <div class="form-group">
+              <label>Card Number <small style="color: red;">* eg. 1234 5678 435678</small></label>
+              <input type="text" class="form-control" name="cnum" placeholder="1234 5678 435678" required>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Expiry <small style="color: red;">* eg. 12/25</small></label>
+                  <input type="text" name="expiry" placeholder="MM/YYYY" class="form-control" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>CVV/CVC <small style="color: red;">* eg. 123</small></label>
+                  <input type="password" name="cvc" placeholder="***" class="form-control" required>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-group">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th colspan="2"> Reservation Details </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Date Start: </td>
+                                <td><?php echo date('Y-m-d H:i:s',strtotime($roomstart)); ?></td>
+                            </tr>
+                            <tr>
+                                <td>Date End: </td>
+                                <td><?php echo date('Y-m-d H:i:s',strtotime($roomend)); ?></td>
+                            </tr>
+                            <tr>
+                                <td>Total Amount: </td>
+                                <td>$<?php echo $amount; ?></td>
+                            </tr>
+                        </tbody>
+                </table>
+              </div>
 
 
             
             <div class="form-group">
+              <!-- Date Start -->
+              <input type="hidden" name="date_start" value=<?php echo $roomstart;?>> 
+              <!-- Date Start -->
+
+              <!-- Date End -->
+              <input type="hidden" name="date_end" value=<?php echo $roomend;?>>
+              <!-- Date End -->
+
+              <!-- Amount -->
+              <input type="hidden" name="amount" value=<?php echo $amount;?>>
+              <!-- Amount -->
+
+              <!-- Room Id -->
+              <input type="hidden" name="roomID" value=<?php echo $roomID;?>>
+              <!-- Room Id -->
+
+              <!-- User Id -->
               <input type="hidden" name="customer_id" value=<?php echo $userid;?>>
-              <input type="hidden" name="reservation_id" value=<?php echo $res_id;?>>
-              <button type="submit" class="btn btn-primary btn-lg" id="submit" name="editReservation">
-                Change Room
+              <!-- User Id -->
+              <button type="submit" class="btn btn-primary btn-lg" id="submit" name="payroom">
+                Pay Room
               </button>
             </div>
           </form>

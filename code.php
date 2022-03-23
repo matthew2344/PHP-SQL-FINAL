@@ -7,6 +7,54 @@ $transaction = "transaction";
 $penalty = "penalty";
 $payment = "payment";
 // FOR CUSTOMER
+// substr_replace("MAMAR230322-KIN00024","YYY",12,3);
+class card{
+    public $pname;
+    public $num;
+    public $expiry;
+    public $cvc;
+
+    function __construct($pname,$num,$expiry,$cvc)
+    {
+        $this->pname = $pname;
+        $this->num = $num;
+        $this->expiry = $expiry;
+        $this->cvc = $cvc;
+    }
+
+    function validateCard()
+    {
+        $server_name = "localhost";
+        $db_username = "root";
+        $db_password = "";
+        $db_name = "test";
+        $connection = mysqli_connect($server_name,$db_username,$db_password,$db_name);
+
+        $query = "SELECT * FROM card WHERE id = '$this->num' AND person_name = '$this->pname'
+         AND expiry = '$this->expiry' AND cvc = '$this->cvc'";
+        $query_run = mysqli_query($connection,$query);
+
+        if(mysqli_num_rows($query_run) > 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    
+}
+
+class transaction{
+    public $id;
+
+    function __construct($name,$month_added,$date_added,$month_year,$room_name,$room_trans_id)
+    {
+       $this->id = strtoupper("$name$month_added$date_added$month_year-$room_name$room_trans_id");
+    }
+}
+
 if(isset($_POST['registerbtn_customer']))
 {
     $fname = $_POST['fname'];
@@ -63,12 +111,10 @@ if(isset($_POST['submitReservation']))
 {
     $customer_id = $_POST['customer_id'];
     $room_id = $_POST['room'];
-    $arrival = strtotime($_POST["date-start"]);
-    $departure = strtotime($_POST["date-end"]);
-    $start_date = date('Y-m-d H:i:s',$arrival);
-    $end_date = date('Y-m-d H:i:s',$departure);
-    //echo date("Mdmy") . "<br>";
-    // echo date("m/d/Y H:i:s") . "<br>";
+    $arrival = $_POST["date-start"];
+    $departure = $_POST["date-end"];
+    $start_date = date('Y-m-d H:i:s',strtotime($arrival));
+    $end_date = date('Y-m-d H:i:s',strtotime($departure));
 
     $get_room =  "SELECT * FROM $roomdb WHERE id = '$room_id'";
     $get_room_run = mysqli_query($connection, $get_room);
@@ -81,41 +127,106 @@ if(isset($_POST['submitReservation']))
     $interval = getInterval($start_date,$end_date);
     $amount_pay = $interval->days * $price;
 
-    $query = "INSERT INTO $reservation (customer_id, room_id, date_start, date_end) VALUES ('$customer_id','$room_id','$start_date','$end_date')";
-    $query_run = mysqli_query($connection, $query);
 
 
 
-    $cust_name = getFname($cuser,$customer_id,$connection);
-
-
-
-    $count = getCount($reservation,$connection);
-
-
-    $reservation_id = grabReservationId($reservation,$connection);
-
-    $name = substr($cust_name,0,2);
-    $month_added = date('M');
-    $date_added = date('d');
-    $month_year = date('my');
     $room_name = substr($room_type,0,3);
-    $room_trans_id = sprintf('%05d',$reservation_id);
-    //return example
-    //2 letters from name, month in 3 letters format ex matthew- ma, FEB, 
-    //number day added to the system ex - 01-31 ,
-    //month and year of reservation eg.feb22 - feb -> 02, 2022 -> 22 = 0222
-    //3 letters from room type ex- KING -> KIN
-    //COUNT OF RESERVATION FROM 5 digit format ex- 00001
-    //MAFEB100222-KIN00001
 
-    $transaction_id = strtoupper("$name$month_added$date_added$month_year-$room_name$room_trans_id");
 
-    $query = "INSERT INTO $transaction (id, reservation_id, customer_id, amount_pay) VALUES ('$transaction_id','$reservation_id','$customer_id','$amount_pay')";
-    $query_run = mysqli_query($connection, $query);
-    header('Location: index.php');
+
+
+
+    $_SESSION['roomID'] = $room_id;
+    $_SESSION['date_start'] = $arrival;
+    $_SESSION['date_end'] = $departure;
+    $_SESSION['amount'] = $amount_pay;
+
+    header('Location: pay_room.php');
+
+    
 }
 
+if(isset($_POST['payroom']))
+{
+    $customerId = $_POST['customer_id'];
+    $roomNumber = $_POST['room'];
+    $roomId = $_POST['roomID'];
+    $date_start = date('Y-m-d H:i:s',strtotime($_POST['date_start']));
+    $date_end = date('Y-m-d H:i:s',strtotime($_POST['date_end']));
+    $amount = $_POST['amount'];
+
+    // CARD INFO
+    $pname = $_POST['pname'];
+    $cnum = $_POST['cnum'];
+    $expiry = $_POST['expiry'];
+    $cvc = $_POST['cvc'];
+    $card = new card($pname,$cnum,$expiry,$cvc);
+    
+    if($card->validateCard() == true)
+    {
+        $query = "SELECT * FROM room WHERE id ='$roomId'";
+        $query_run = mysqli_query($connection,$query);
+        if($query_run) { $roomRow = mysqli_fetch_assoc($query_run);}
+        $cust_name = getFname($cuser,$customerId,$connection);
+    
+        // Variables for transaction
+        $room_name = substr($roomRow['type'],0,3);
+        $name = substr($cust_name,0,2);
+        $month_added = date('M');
+        $date_added = date('d');
+        $month_year = date('my');
+        // Variables for transaction
+    
+        
+    
+        $query = "INSERT INTO $reservation (customer_id, room_id, date_start, date_end, amount) VALUE ('$customerId','$roomId','$date_start','$date_end','$amount')";
+        $query_run = mysqli_query($connection, $query);
+        $reservation_id = mysqli_insert_id($connection);
+        $room_trans_id = sprintf('%05d',$reservation_id);
+        
+    
+    
+        $query = "INSERT INTO room_reserved (room_number, reservation_id) VALUE ('$roomNumber', '$reservation_id')";
+        $query_run = mysqli_query($connection, $query);
+    
+        $transObj = new transaction($name,$month_added,$date_added,$month_year,$room_name,$room_trans_id);
+        $transaction_id = $transObj->id;
+
+        $query = "INSERT INTO $transaction (id, reservation_id, customer_id, card_id, amount_pay) VALUES ('$transaction_id','$reservation_id','$customerId','$card->num','$amount')";
+        $query_run = mysqli_query($connection, $query);
+
+
+        $query = "UPDATE card SET balance = (balance - '$amount') WHERE id = '$card->num'";
+        $query_run = mysqli_query($connection, $query);
+
+    
+        if($query_run)
+        {
+
+            unset($_SESSION['date_start']);
+            unset($_SESSION['date_end']);
+            unset($_SESSION['amount']);
+            unset($_SESSION['roomID']);
+            header('Location: index.php');
+        }
+        else
+        {
+            $_SESSION['ERROR'] = "Something Went Wrong";
+            header('Location: pay_room.php');
+        }
+        
+    }
+    else
+    {
+        echo  "ERROR <br>";
+        echo  $card->pname."<br>";
+        echo  $card->num."<br>";
+        echo  $card->expiry."<br>";
+        echo  $card->cvc."<br>";
+    }
+
+
+}
 
 if(isset($_POST['editReservation']))
 {
@@ -123,15 +234,14 @@ if(isset($_POST['editReservation']))
     $reservation_id = $_POST['reservation_id'];
     $room_no = $_POST['room'];
 
-    $query = "SELECT * FROM transaction WHERE reservation_id = '$reservation_id'";
+    $query = "UPDATE room_reserved SET room_number = '$room_no' WHERE reservation_id ='$reservation_id'";
     $query_run = mysqli_query($connection, $query);
 
     if($query_run)
     {
-        $trans_row = mysqli_fetch_assoc($query_run);
+        header('Location: index.php');
     }
 
-    
 }
 
 
@@ -168,7 +278,18 @@ if(isset($_POST['cancel_room']))
     if($diff->days >= 5)
     {
         $amountPay = $amountPay * .1;
-        $query = "INSERT INTO penalty (customer_id, amount) VALUES ('$custId','$amountPay')";
+        $get = "SELECT * FROM $transaction WHERE reservation_id = '$id'";
+        $get_run = mysqli_query($connection, $get);
+        if($get_run)
+        {
+            $row = mysqli_fetch_assoc($get_run);
+        }
+        $cardnumber = $row['card_id'];
+
+        $query = "UPDATE card SET balance = (balance - '$amountPay') WHERE id = '$cardnumber'";
+        $query_run = mysqli_query($connection, $query);
+
+        $query = "DELETE FROM room_reserved WHERE reservation_id = '$id'";
         $query_run = mysqli_query($connection, $query);
 
         $query = "DELETE FROM $transaction WHERE reservation_id = '$id'";
@@ -177,6 +298,7 @@ if(isset($_POST['cancel_room']))
         $query = "DELETE FROM $reservation WHERE id = '$id'";
         $query_run = mysqli_query($connection, $query);
      
+
         if($query_run)
         {
             $_SESSION['status'] = "Your Room '$id' is Canceled";
@@ -193,15 +315,26 @@ if(isset($_POST['cancel_room']))
     else if($diff->days > 2 && $diff->days < 5)
     {
         $amountPay = $amountPay * .15;
-        
-        $query = "INSERT INTO penalty (customer_id, amount) VALUES ('$custId','$amountPay')";
-        $query_run = mysqli_query($connection, $query);
+        $get = "SELECT * FROM $transaction WHERE reservation_id = '$id'";
+        $get_run = mysqli_query($connection, $get);
+        if($get_run)
+        {
+            $row = mysqli_fetch_assoc($get_run);
+        }
+        $cardnumber = $row['card_id'];
 
+        $query = "UPDATE card SET balance = (balance - '$amountPay') WHERE id = '$cardnumber'";
+        $query_run = mysqli_query($connection, $query);
+        
+        $query = "DELETE FROM room_reserved WHERE reservation_id = '$id'";
+        $query_run = mysqli_query($connection, $query);
+        
         $query = "DELETE FROM $transaction WHERE reservation_id = '$id'";
         $query_run = mysqli_query($connection, $query);
 
         $query = "DELETE FROM $reservation WHERE id = '$id'";
         $query_run = mysqli_query($connection, $query);
+
      
         if($query_run)
         {
@@ -219,14 +352,25 @@ if(isset($_POST['cancel_room']))
     else if($diff->days <= 2 && $d1 > $d2)
     {
         $amountPay = $amountPay * .2;
+        $get = "SELECT * FROM $transaction WHERE reservation_id = '$id'";
+        $get_run = mysqli_query($connection, $get);
+        if($get_run)
+        {
+            $row = mysqli_fetch_assoc($get_run);
+        }
+        $cardnumber = $row['card_id'];
 
-        $query = "INSERT INTO penalty (customer_id, amount) VALUES ('$custId','$amountPay')";
+        $query = "UPDATE card SET balance = (balance - '$amountPay') WHERE id = '$cardnumber'";
         $query_run = mysqli_query($connection, $query);
+
 
         $query = "DELETE FROM $transaction WHERE reservation_id = '$id'";
         $query_run = mysqli_query($connection, $query);
 
         $query = "DELETE FROM $reservation WHERE id = '$id'";
+        $query_run = mysqli_query($connection, $query);
+
+        $query = "DELETE FROM room_reserved WHERE reservation_id = '$id'";
         $query_run = mysqli_query($connection, $query);
      
         if($query_run)
@@ -327,6 +471,7 @@ if(isset($_POST['SaveNewPass']))
 
 
 }
+
 
 
 

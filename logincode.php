@@ -1,7 +1,7 @@
 <?php
 include('security.php');
 $cuser = "customer";
-$connection = mysqli_connect("localhost","root","","test");
+
 
 if(isset($_POST['login_btn_client']))
 {

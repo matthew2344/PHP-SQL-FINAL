@@ -9,43 +9,7 @@
             <p><a href="#" class="link-with-icon">Learn More <i class=" icon-chevron-right"></i></a></p>
           </div>
         </div>
-        <div class="col-md-4">
-          <div class="probootstrap-footer-widget">
-            <h3>Blog</h3>
-            <ul class="probootstrap-blog-list">
-              <li>
-                <a href="#">
-                  <figure class="probootstrap-image"><img src="img/img_1.jpg" alt="Free Bootstrap Template by uicookies.com" class="img-responsive"></figure>
-                  <div class="probootstrap-text">
-                    <h4>River named Duden flows</h4>
-                    <span class="meta">August 2, 2017</span>
-                    <p>A small river named Duden flows by their place</p>
-                  </div>
-                </a>
-              </li>
-              <li>
-                <a href="#">
-                  <figure class="probootstrap-image"><img src="img/img_2.jpg" alt="Free Bootstrap Template by uicookies.com" class="img-responsive"></figure>
-                  <div class="probootstrap-text">
-                    <h4>River named Duden flows</h4>
-                    <span class="meta">August 2, 2017</span>
-                    <p>A small river named Duden flows by their place</p>
-                  </div>
-                </a>
-              </li>
-              <li>
-                <a href="#">
-                  <figure class="probootstrap-image"><img src="img/img_3.jpg" alt="Free Bootstrap Template by uicookies.com" class="img-responsive"></figure>
-                  <div class="probootstrap-text">
-                    <h4>River named Duden flows</h4>
-                    <span class="meta">August 2, 2017</span>
-                    <p>A small river named Duden flows by their place</p>
-                  </div>
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
+
         <div class="col-md-4">
           <div class="probootstrap-footer-widget">
             <h3>Contact</h3>

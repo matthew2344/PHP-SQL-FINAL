@@ -2,7 +2,7 @@
 include('security.php');
 $user = "admins";
 $cuser = "customer";
-$connection = mysqli_connect("localhost","root","","test");
+
 
 if(isset($_POST['login_btn']))
 {

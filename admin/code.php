@@ -129,6 +129,88 @@ if(isset($_POST['login_btn']))
     
 }
 
+if(isset($_POST['uploadImage']))
+{
+    $image = $_FILES["slide_image"]['name'];
+    $header = $_POST['slider_header'];
+    $description = $_POST['slider_description'];
+
+    if(file_exists("upload/" . $_FILES["slide_image"]["name"]))
+    {
+        $store = $_FILES["slide_image"]["name"];
+        $_SESSION['status'] = "Image already exists. '.$store.'";
+        header('Location: slider.php');
+    }
+    else
+    {
+        $query = "INSERT INTO slider (image, header, description) VALUES ('$image','$header','$description')";
+        $query_run = mysqli_query($connection, $query);
+
+        if($query_run)
+        {
+            move_uploaded_file($_FILES["slide_image"]["tmp_name"],"upload/".$_FILES["slide_image"]["name"]);
+            $_SESSION['success'] = "Slide Added";
+            header('Location: slider.php');
+        }
+        else
+        {
+            $_SESSION['success'] = "Slide not Added";
+            header('Location: slider.php');
+        }
+    }
+}
+
+if(isset($_POST['update_slider']))
+{
+    $slideID = $_POST['edit_id'];
+    $image = $_FILES["slide_image"]['name'];
+    $header = $_POST['edit_header'];
+    $description = $_POST['edit_description'];
+
+    $validate = "SELECT * FROM slider WHERE id = '$slideID'";
+    $validate_run = mysqli_query($connection, $validate);
+    foreach($validate_run as $row)
+    {
+        if($image == NULL)
+        {
+            $image_data = $row['image'];
+        }
+        else
+        {
+            if($img_path = "upload/".$row['image'])
+            {
+                unlink($img_path);
+                $image_data = $image;
+            }
+        }
+    }
+
+    $query = "UPDATE slider SET image = '$image_data', header = '$header', description = '$description' WHERE id = '$slideID'";
+    $query_run = mysqli_query($connection, $query);
+
+    if($query_run)
+    {
+        if($image == NULL)
+        {
+            $_SESSION['success'] = "Slider Updated with existing image";
+            header('Location: slider.php'); 
+        }
+        else
+        {
+            move_uploaded_file($_FILES["slide_image"]["tmp_name"],"upload/".$_FILES["slide_image"]["name"]);
+            $_SESSION['status'] = "Your Data is Updated";
+            $_SESSION['status_code'] = "success";
+            header('Location: slider.php'); 
+        }
+    }
+    else
+    {
+        $_SESSION['status'] = "Your Data is NOT Updated";
+        $_SESSION['status_code'] = "error";
+        header('Location: slider.php'); 
+    }
+
+}
 
 
 if(isset($_POST['add_room']))
@@ -201,7 +283,25 @@ if(isset($_POST['rooms_updatebtn']))
     $query = "UPDATE $roomdb SET title='$edit_title', type='$edit_type', image='$image_data', description='$edit_description', quantity ='$edit_quantity',  price ='$edit_price' WHERE id='$edit_id' ";
     $query_run = mysqli_query($connection, $query);
 
-    $validate = "";
+    $typeReplace = substr($edit_type,0,3);
+    $replace = strtoupper($typeReplace);
+
+    $select = "SELECT a.* FROM transaction a
+    INNER JOIN reservation ON reservation.id = a.reservation_id
+    INNER JOIN room ON room.id = reservation.room_id 
+    WHERE room.id = '$edit_id'";
+    $select_run= mysqli_query($connection,$select);
+    if($select_run)
+    {
+        while($row = mysqli_fetch_assoc($select_run))
+        {
+            $id = $row['id'];
+            $newID = substr_replace($id,$replace,12,3);
+            $temp = "UPDATE transaction SET id = '$newID' WHERE id = '$id'";
+            $temp_run = mysqli_query($connection,$temp);
+        }
+    }
+    
 
     if($query_run)
     {

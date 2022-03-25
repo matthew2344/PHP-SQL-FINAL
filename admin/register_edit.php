@@ -14,7 +14,6 @@ include('includes/navbar.php');
         </div>
         <div class="card-body">
         <?php
-            $connection = mysqli_connect("localhost","root","","test");
             if(isset($_POST['edit_btn']))
             {
                 $id = $_POST['edit_id'];

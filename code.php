@@ -199,6 +199,18 @@ if(isset($_POST['payroom']))
         $query = "UPDATE card SET balance = (balance - '$amount') WHERE id = '$card->num'";
         $query_run = mysqli_query($connection, $query);
 
+        $a = "SELECT * FROM invoice WHERE customer_id = '$customerId'";
+        $a_run = mysqli_query($connection, $a);
+        if(mysqli_num_rows($query_run) > 0)
+        {
+            $query = "INSERT INTO invoice (customer_id, amount) VALUES ('$customerId','$amount')";
+            $query_run = mysqli_query($connection, $query);
+        }
+        else
+        {
+            $query = "UPDATE invoice SET amount = (amount + '$amount') WHERE customer_id = '$customerId'";
+            $query_run = mysqli_query($connection, $query);
+        }
     
         if($query_run)
         {
@@ -218,11 +230,9 @@ if(isset($_POST['payroom']))
     }
     else
     {
-        echo  "ERROR <br>";
-        echo  $card->pname."<br>";
-        echo  $card->num."<br>";
-        echo  $card->expiry."<br>";
-        echo  $card->cvc."<br>";
+        $_SESSION['ERROR'] = "Card Details Is Invalid";
+
+        header('Location: pay_room.php');
     }
 
 

@@ -7,7 +7,6 @@ $first_part = $components[2];
 
 $customer = "customer";
 $email = $_SESSION['cusername'];
-$connection = mysqli_connect("localhost","root","","test");
 $get_user = "SELECT * FROM $customer WHERE email='$email'";
 $get_user_run = mysqli_query($connection, $get_user);
 foreach($get_user_run as $user){
@@ -43,7 +42,7 @@ foreach($get_user_run as $user){
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>uiCookies:Atlantis &mdash; Free Bootstrap Theme, Free Responsive Bootstrap Website Template</title>
+    <title>Hotel</title>
     <meta name="description" content="Free Bootstrap Theme by uicookies.com">
     <meta name="keywords" content="free website templates, free bootstrap themes, free template, free bootstrap, free website template">
     
@@ -72,26 +71,17 @@ foreach($get_user_run as $user){
         <nav role="navigation" class="probootstrap-nav hidden-xs">
           <ul class="probootstrap-main-nav">
             <li class="<?php if ($first_part == "index.php") {echo "active";} else {echo "noactive";}?>"><a href="index.php">Home</a></li>
-            <li class="<?php if ($first_part == "about.html") {echo "active";} else {echo "noactive";}?>"><a href="about.html">About</a></li>
+            <li class="<?php if ($first_part == "about.php") {echo "active";} else {echo "noactive";}?>"><a href="about.php">About</a></li>
             <li class="<?php if ($first_part == "rooms.php") {echo "active";} else {echo "noactive";}?>"><a href="rooms.php">Our Rooms</a></li>
             <li class="hidden-xs probootstrap-logo-center">
               <a href="index.php"><img src="img/logo_md.png" class="hires" width="181" height="50" alt="Free Bootstrap Template by uicookies.com"></a>
             </li>
             <li class="<?php if ($first_part == "reservation.php") {echo "active";} else {echo "noactive";}?>"><a href="reservation.php">Reservation</a></li>
-            <li class="<?php if ($first_part == "blog.html") {echo "active";} else {echo "noactive";}?>"><a href="blog.html">Blog</a></li>
-            <li class="<?php if ($first_part == "contact.html") {echo "active";} else {echo "noactive";}?>"><a href="contact.html">Contact</a></li>
-            <li class="visible-xs"><a href="contact.html">
-              <span>
-                <?php echo $_SESSION['cusername'];?></a>
-              </span>
-              
-            </li>
+            <li class="<?php if ($first_part == "contact.php") {echo "active";} else {echo "noactive";}?>"><a href="contact.php">Contact</a></li>
             <li class="nav-item dropdown no-arrow ms-auto hidden-xs">
                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">
-                    
-                    <?php echo $_SESSION['cusername'];?>
-                    
+                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">               
+                    <?php echo $_SESSION['cusername'];?>         
                     </span>
                 </a>
                  <!-- Dropdown - User Information -->
@@ -113,6 +103,18 @@ foreach($get_user_run as $user){
               </div>
             </li>
           </ul>
+          <div class="extra-text visible-xs">
+            <a href="#" class="probootstrap-burger-menu"><i>Menu</i></a>
+            <h5><?php echo $_SESSION['cusername'];?></a></h5>
+            <ul class="probootstrap-main-nav">
+              <li><a href="profile.php">My Profile</a></li>
+              <li><a href="book.php">My Reservation</a></li>
+              <li>
+                  <a href="logout.php">Logout</a>
+              </li>
+            </ul>
+
+          </div>
           <div class="extra-text visible-xs">
             <a href="#" class="probootstrap-burger-menu"><i>Menu</i></a>
             <h5>Connect With Us</h5>

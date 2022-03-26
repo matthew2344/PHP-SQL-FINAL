@@ -52,12 +52,6 @@ include('includes/navbar.php');
                                 <input type="text" name="edit_description" value="<?php echo $row['description'] ?>" class="form-control"
                                     placeholder="Enter description">
                             </div>
-
-                            <div class="form-group">
-                                <label>Quantity</label>
-                                <input type="text" name="edit_quantity" value="<?php echo $row['quantity'] ?>"
-                                    class="form-control" placeholder="Enter quantity">
-                            </div>
                             
                             <div class="form-group">
                                 <label>Price</label>

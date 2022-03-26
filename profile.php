@@ -106,19 +106,6 @@ include('header.php');
         $email = $row['email'];
       }
 
-      $current_penalty = "SELECT SUM(amount) AS balance FROM penalty WHERE customer_id = '$userid'";
-      $run_current = mysqli_query($connection, $current_penalty);
-      foreach($run_current as $i)
-      {
-          $penalty = $i['balance'];
-      }
-
-      $current_balance = "SELECT SUM(amount_pay) AS balance FROM transaction WHERE customer_id = '$userid'";
-      $run_current = mysqli_query($connection, $current_balance);
-      foreach($run_current as $a)
-      {
-          $balance = $a['balance'];
-      }
 ?>
 
 
@@ -171,14 +158,6 @@ include('header.php');
                         <tr>
                           <td>Email:</td>
                           <td colspan="5"><?php echo "$email"; ?></td>
-                        </tr>
-                        <tr>
-                            <td>Penalty: </td>
-                            <td colspan="5"><?php echo "$".$penalty."-Cancellation of room"; ?></td>
-                        </tr>
-                        <tr>
-                            <td>Balance: </td>
-                            <td colspan="5"><?php echo "$".$balance; ?></td>
                         </tr>
                     </tbody>
                     </table>

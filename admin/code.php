@@ -232,6 +232,13 @@ if(isset($_POST['add_room']))
     {
         $query = "INSERT INTO $roomdb (title,type,image,description,quantity,price) VALUES ('$title','$type','$image','$description','$quantity','$price')";
         $query_run = mysqli_query($connection, $query);
+        $roomId = mysqli_insert_id($connection);
+        
+        for($i=0;$i<$quantity;$i++)
+        {
+            $addRoom = "INSERT INTO room_number (room_id) VALUES ($roomId)";
+            $addRoom_run = mysqli_query($connection,$addRoom);
+        }
 
         
         if($query_run)
@@ -256,7 +263,6 @@ if(isset($_POST['rooms_updatebtn']))
     $edit_type = $_POST['edit_type'];
     $edit_image = $_FILES["room_image"]['name'];
     $edit_description = $_POST['edit_description'];
-    $edit_quantity = $_POST['edit_quantity'];
     $edit_price = $_POST['edit_price'];
 
     $room_query = "SELECT * FROM $roomdb WHERE id='$edit_id' ";
@@ -280,7 +286,8 @@ if(isset($_POST['rooms_updatebtn']))
         }
     }
 
-    $query = "UPDATE $roomdb SET title='$edit_title', type='$edit_type', image='$image_data', description='$edit_description', quantity ='$edit_quantity',  price ='$edit_price' WHERE id='$edit_id' ";
+
+    $query = "UPDATE $roomdb SET title='$edit_title', type='$edit_type', image='$image_data', description='$edit_description', price ='$edit_price' WHERE id='$edit_id' ";
     $query_run = mysqli_query($connection, $query);
 
     $typeReplace = substr($edit_type,0,3);
@@ -335,50 +342,44 @@ if(isset($_POST['delete_room_btn']))
 {
     $id = $_POST['delete_id'];
 
-    $query = "DELETE FROM $roomdb WHERE id='$id' ";
-    $query_run = mysqli_query($connection, $query);
+    $check = "SELECT * FROM room_number 
+    WHERE room_number.id IN (SELECT room_number FROM room_reserved)
+    AND room_number.room_id = '$id'";
+    $check_run = mysqli_query($connection, $check);
 
-    if($query_run)
+    if(mysqli_num_rows($check_run) > 0)
     {
-        $_SESSION['status'] = "Your Data is Deleted";
-        $_SESSION['status_code'] = "success";
-        header('Location: rooms.php'); 
+        $_SESSION['error_room_delete'] = "Cannot be deleted.. There are still customer using this type of room ";
+        header('Location: rooms.php');
     }
     else
     {
-        $_SESSION['status'] = "Your Data is NOT DELETED";       
-        $_SESSION['status_code'] = "error";
-        header('Location: rooms.php'); 
-    }    
-}
+        $query = "DELETE FROM room_number WHERE room_id='$id' ";
+        $query_run = mysqli_query($connection, $query);
 
-
-if(isset($_POST['applyRoom']))
-{
-    $query = "SELECT * FROM room";
-    $query_run = mysqli_query($connection, $query);
-    if(mysqli_num_rows($query_run) > 0)
-    {
-        while($row =  mysqli_fetch_assoc($query_run))
+        $query = "DELETE FROM $roomdb WHERE id='$id' ";
+        $query_run = mysqli_query($connection, $query);
+    
+        if($query_run)
         {
-            $id = $row['id'];
-            $quantity = $row['quantity'];
-            for($i = 0; $i < $quantity; $i++)
-            {
-                $query_aw = "INSERT INTO room_number (room_id) VALUES ('$id')";
-                $query_aw_run = mysqli_query($connection, $query_aw);
-                if($query_aw_run)
-                {
-                    $_SESSION['status'] = "Rooms are now applied";
-                    header('Location: rooms.php'); 
-                }
-            }
+            $_SESSION['status'] = "Your Data is Deleted";
+            $_SESSION['status_code'] = "success";
+            header('Location: rooms.php'); 
         }
-    } else
-    {
-
+        else
+        {
+            $_SESSION['status'] = "Your Data is NOT DELETED";       
+            $_SESSION['status_code'] = "error";
+            header('Location: rooms.php'); 
+        }    
     }
+
+
+
 }
+
+
+
 
 
 ?>

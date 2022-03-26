@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 25, 2022 at 03:37 PM
+-- Generation Time: Mar 26, 2022 at 07:11 AM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 8.1.1
 
@@ -60,7 +60,7 @@ CREATE TABLE `card` (
 --
 
 INSERT INTO `card` (`id`, `person_name`, `expiry`, `cvc`, `balance`) VALUES
-('1234 5678 435678', 'John Doe', '12/25', 123, '9655'),
+('1234 5678 435678', 'John Doe', '12/25', 123, '9442'),
 ('5214 2970 352808', 'John Carmelo Gamboa', '12/25', 123, '10000'),
 ('5217 6867 920092', 'Matthew Andre Butalid', '12/25', 123, '10000');
 
@@ -97,6 +97,13 @@ CREATE TABLE `invoice` (
   `amount` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data for table `invoice`
+--
+
+INSERT INTO `invoice` (`id`, `customer_id`, `amount`) VALUES
+(2, 1, '116.00');
+
 -- --------------------------------------------------------
 
 --
@@ -108,14 +115,6 @@ CREATE TABLE `penalty` (
   `customer_id` int(11) NOT NULL,
   `amount` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `penalty`
---
-
-INSERT INTO `penalty` (`id`, `customer_id`, `amount`) VALUES
-(6, 1, '7.50'),
-(7, 1, '7.50');
 
 -- --------------------------------------------------------
 
@@ -137,7 +136,7 @@ CREATE TABLE `reservation` (
 --
 
 INSERT INTO `reservation` (`id`, `customer_id`, `room_id`, `date_start`, `date_end`, `amount`) VALUES
-(36, 1, 1, '2022-03-27 18:19:00', '2022-03-28 18:19:00', '50');
+(48, 1, 1, '2022-03-28 13:18:00', '2022-03-29 13:18:00', '50');
 
 -- --------------------------------------------------------
 
@@ -233,7 +232,7 @@ CREATE TABLE `room_reserved` (
 --
 
 INSERT INTO `room_reserved` (`id`, `room_number`, `reservation_id`) VALUES
-(5, 81, 36);
+(17, 81, 48);
 
 -- --------------------------------------------------------
 
@@ -275,7 +274,7 @@ CREATE TABLE `transaction` (
 --
 
 INSERT INTO `transaction` (`id`, `reservation_id`, `customer_id`, `card_id`, `amount_pay`) VALUES
-('MAMAR250322-KIN00036', 36, 1, '1234 5678 435678', '50.00');
+('MAMAR260322-KIN00048', 48, 1, '1234 5678 435678', '50.00');
 
 --
 -- Indexes for dumped tables
@@ -377,7 +376,7 @@ ALTER TABLE `customer`
 -- AUTO_INCREMENT for table `invoice`
 --
 ALTER TABLE `invoice`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `penalty`
@@ -389,7 +388,7 @@ ALTER TABLE `penalty`
 -- AUTO_INCREMENT for table `reservation`
 --
 ALTER TABLE `reservation`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `room`
@@ -407,7 +406,7 @@ ALTER TABLE `room_number`
 -- AUTO_INCREMENT for table `room_reserved`
 --
 ALTER TABLE `room_reserved`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `slider`

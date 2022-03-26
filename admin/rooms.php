@@ -35,8 +35,8 @@ include('includes/navbar.php');
                 <input type="text" name="room_description" class="form-control" placeholder="Enter Description" required>
             </div>
             <div class="form-group">
-                <label>Quantity</label>
-                <input type="text" name="room_quantity" class="form-control" placeholder="Enter quantity of rooms" required>
+                <label>Quantity <small style="color:red;">*Room quantity is permanent and it cannot be changed afterwards</small></label>
+                <input type="number" name="room_quantity" class="form-control" placeholder="Enter quantity of rooms" required>
             </div>
             <div class="form-group">
                 <label>Price</label>
@@ -55,8 +55,20 @@ include('includes/navbar.php');
   </div>
 </div>
 
+
+
+
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
+<?php 
+
+if(isset($_SESSION['error_room_delete']) && $_SESSION['error_room_delete'] !='') 
+{
+    echo '<h2 class="bg-danger text-white"> '.$_SESSION['error_room_delete'].' </h2>';
+    unset($_SESSION['error_room_delete']);
+}
+
+?>
   <div class="card-header py-3">
     <h6 class="m-0 font-weight-bold text-primary">Rooms 
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#roomsModal">
@@ -129,9 +141,7 @@ include('includes/navbar.php');
   </div>
 </div>
 
-<form action="code.php" method="post">
-<button type="submit" name="applyRoom" class="btn btn-primary">Apply Room</button>
-</form>
+
 </div>
 <!-- /.container-fluid -->
 

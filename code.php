@@ -201,24 +201,25 @@ if(isset($_POST['payroom']))
 
         $a = "SELECT * FROM invoice WHERE customer_id = '$customerId'";
         $a_run = mysqli_query($connection, $a);
-        if(mysqli_num_rows($query_run) > 0)
+        if(mysqli_num_rows($a_run) > 0)
         {
-            $query = "INSERT INTO invoice (customer_id, amount) VALUES ('$customerId','$amount')";
-            $query_run = mysqli_query($connection, $query);
+            $b = "UPDATE invoice SET amount = (amount + '$amount') WHERE customer_id = '$customerId'";
+            $b_run = mysqli_query($connection, $b);
         }
         else
         {
-            $query = "UPDATE invoice SET amount = (amount + '$amount') WHERE customer_id = '$customerId'";
-            $query_run = mysqli_query($connection, $query);
+            $b = "INSERT INTO invoice (customer_id, amount) VALUES ('$customerId','$amount')";
+            $b_run = mysqli_query($connection, $b);
         }
     
-        if($query_run)
+        if($b_run)
         {
 
             unset($_SESSION['date_start']);
             unset($_SESSION['date_end']);
             unset($_SESSION['amount']);
             unset($_SESSION['roomID']);
+
             header('Location: index.php');
         }
         else
@@ -295,14 +296,18 @@ if(isset($_POST['cancel_room']))
             $row = mysqli_fetch_assoc($get_run);
         }
         $cardnumber = $row['card_id'];
+        $oldAmount = $row['amount_pay'];
+
+        $query = "UPDATE card SET balance = (balance + '$oldAmount') WHERE id = '$cardnumber'";
+        $query_run = mysqli_query($connection, $query);
 
         $query = "UPDATE card SET balance = (balance - '$amountPay') WHERE id = '$cardnumber'";
         $query_run = mysqli_query($connection, $query);
 
-        $query = "DELETE FROM room_reserved WHERE reservation_id = '$id'";
+        $query = "UPDATE invoice SET amount = (amount - '$oldAmount') WHERE customer_id = '$custId' ";
         $query_run = mysqli_query($connection, $query);
 
-        $query = "DELETE FROM $transaction WHERE reservation_id = '$id'";
+        $query = "UPDATE invoice SET amount = (amount + '$amountPay') WHERE customer_id = '$custId' ";
         $query_run = mysqli_query($connection, $query);
 
         $query = "DELETE FROM $reservation WHERE id = '$id'";
@@ -311,6 +316,9 @@ if(isset($_POST['cancel_room']))
 
         if($query_run)
         {
+            $getLast = substr($cardnumber,-3,3);
+            $censor = substr_replace("**** **** ******",$getLast,-3,3);
+            $_SESSION['card_update'] = "A $$amountPay penalty was issued in your account with card number of $censor";
             $_SESSION['status'] = "Your Room '$id' is Canceled";
             $_SESSION['status_code'] = "success";
             header('Location: book.php'); 
@@ -332,14 +340,18 @@ if(isset($_POST['cancel_room']))
             $row = mysqli_fetch_assoc($get_run);
         }
         $cardnumber = $row['card_id'];
+        $oldAmount = $row['amount_pay'];
+
+        $query = "UPDATE card SET balance = (balance + '$oldAmount') WHERE id = '$cardnumber'";
+        $query_run = mysqli_query($connection, $query);
 
         $query = "UPDATE card SET balance = (balance - '$amountPay') WHERE id = '$cardnumber'";
         $query_run = mysqli_query($connection, $query);
         
-        $query = "DELETE FROM room_reserved WHERE reservation_id = '$id'";
+        $query = "UPDATE invoice SET amount = (amount - '$oldAmount') WHERE customer_id = '$custId' ";
         $query_run = mysqli_query($connection, $query);
-        
-        $query = "DELETE FROM $transaction WHERE reservation_id = '$id'";
+
+        $query = "UPDATE invoice SET amount = (amount + '$amountPay') WHERE customer_id = '$custId' ";
         $query_run = mysqli_query($connection, $query);
 
         $query = "DELETE FROM $reservation WHERE id = '$id'";
@@ -348,6 +360,9 @@ if(isset($_POST['cancel_room']))
      
         if($query_run)
         {
+            $getLast = substr($cardnumber,-3,3);
+            $censor = substr_replace("**** **** ******",$getLast,-3,3);
+            $_SESSION['card_update'] = "A $$amountPay penalty was issued in your account with card number of $censor";
             $_SESSION['status'] = "Your Room '$id' is Canceled";
             $_SESSION['status_code'] = "success";
             header('Location: book.php'); 
@@ -359,7 +374,7 @@ if(isset($_POST['cancel_room']))
             header('Location: book.php'); 
         }    
     }
-    else if($diff->days <= 2 && $d1 > $d2)
+    else if($diff->days <= 2)
     {
         $amountPay = $amountPay * .2;
         $get = "SELECT * FROM $transaction WHERE reservation_id = '$id'";
@@ -369,29 +384,33 @@ if(isset($_POST['cancel_room']))
             $row = mysqli_fetch_assoc($get_run);
         }
         $cardnumber = $row['card_id'];
+        $oldAmount = $row['amount_pay'];
+
+        $query = "UPDATE card SET balance = (balance + '$oldAmount') WHERE id = '$cardnumber'";
+        $query_run = mysqli_query($connection, $query);
 
         $query = "UPDATE card SET balance = (balance - '$amountPay') WHERE id = '$cardnumber'";
         $query_run = mysqli_query($connection, $query);
 
+        $query = "UPDATE invoice SET amount = (amount - '$oldAmount') WHERE customer_id = '$custId' ";
+        $query_run = mysqli_query($connection, $query);
 
-        $query = "DELETE FROM $transaction WHERE reservation_id = '$id'";
+        $query = "UPDATE invoice SET amount = (amount + '$amountPay') WHERE customer_id = '$custId' ";
         $query_run = mysqli_query($connection, $query);
 
         $query = "DELETE FROM $reservation WHERE id = '$id'";
         $query_run = mysqli_query($connection, $query);
 
-        $query = "DELETE FROM room_reserved WHERE reservation_id = '$id'";
-        $query_run = mysqli_query($connection, $query);
-     
         if($query_run)
         {
-            $_SESSION['status'] = "Your Room '$id' is Canceled";
-            $_SESSION['status_code'] = "success";
+            $getLast = substr($cardnumber,-3,3);
+            $censor = substr_replace("**** **** ******",$getLast,-3,3);
+            $_SESSION['card_update'] = "A $$amountPay penalty was issued in your account with card number of $censor";
             header('Location: book.php'); 
         }
         else
         {
-            $_SESSION['status'] = "Your Room '$id' is Canceled";       
+            $_SESSION['status'] = "Oops something went wrong";       
             $_SESSION['status_code'] = "error";
             header('Location: book.php'); 
         }
@@ -486,44 +505,6 @@ if(isset($_POST['SaveNewPass']))
 
 
 
-
-if(isset($_POST['paymentsubmit']))
-{
-    $userid = $_POST['userid'];
-
-    $amountoPay = $_POST['balance'];
-    $paymentInput = $_POST['paymentInput'];
-    
-
-    if($amountoPay === $paymentInput)
-    {
-        $query = "INSERT INTO invoice (customer_id, amount) VALUES ('$userid','$amountoPay')";
-        $query_run = mysqli_query($connection, $query);
-        $query = "DELETE FROM penalty WHERE customer_id = '$userid' ";
-        $query_run = mysqli_query($connection, $query);
-        
-        
-        if($query_run)
-        {
-            $_SESSION['status'] = "Transaction Complete";
-            $_SESSION['status_code'] = "warning";
-            header('Location: pay.php');
-        }
-        else
-        {
-            $_SESSION['status'] = "Insertion error";
-            $_SESSION['status_code'] = "warning";
-            header('Location: pay.php');
-        }
-    }
-    else
-    {
-        $_SESSION['status'] = "Incomplete transaction";
-        $_SESSION['status_code'] = "warning";
-        header('Location: pay.php');
-    }
- 
-}
 
 
 

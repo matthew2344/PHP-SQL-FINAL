@@ -43,8 +43,7 @@ include('header.php');
       $roomTitle = $a['title'];
 
 
-      
-
+     
       $query = "SELECT * FROM room_number 
       WHERE room_number.id NOT IN (SELECT room_number FROM room_reserved) 
       AND room_number.room_id = '$roomID'";

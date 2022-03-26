@@ -22,9 +22,15 @@ include('header.php');
             unset($_SESSION['success']);
             }
 
+            if(isset($_SESSION['card_update']) && $_SESSION['card_update'] !='')
+            {
+            echo '<h4 class="bg-info">' .$_SESSION['card_update']. '</h4>';
+            unset($_SESSION['card_update']);
+            }
+
             if(isset($_SESSION['status']) && $_SESSION['status'] !='')
             {
-            echo '<h2 class="bg-info">' .$_SESSION['status']. '</h2>';
+            echo '<h4 class="bg-info">' .$_SESSION['status']. '</h4>';
             unset($_SESSION['status']);
             }
         ?>

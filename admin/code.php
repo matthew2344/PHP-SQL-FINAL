@@ -233,16 +233,16 @@ if(isset($_POST['add_room']))
         $query = "INSERT INTO $roomdb (title,type,image,description,quantity,price) VALUES ('$title','$type','$image','$description','$quantity','$price')";
         $query_run = mysqli_query($connection, $query);
         $roomId = mysqli_insert_id($connection);
-        
-        for($i=0;$i<$quantity;$i++)
-        {
-            $addRoom = "INSERT INTO room_number (room_id) VALUES ($roomId)";
-            $addRoom_run = mysqli_query($connection,$addRoom);
-        }
+    
 
         
         if($query_run)
         {
+            for($i=0;$i<$quantity;$i++)
+            {
+                $addRoom = "INSERT INTO room_number (room_id) VALUES ($roomId)";
+                $addRoom_run = mysqli_query($connection,$addRoom);
+            }
             move_uploaded_file($_FILES["room_image"]["tmp_name"],"upload/".$_FILES["room_image"]["name"]);
             $_SESSION['success'] = "Rooms Added";
             header('Location: rooms.php');

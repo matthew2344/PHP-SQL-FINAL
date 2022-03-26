@@ -14,8 +14,8 @@ include('includes/navbar.php');
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form action="code.php" method="POST" enctype="multipart/form-data">
 
+      <form action="code.php" method="POST" enctype="multipart/form-data">
         <div class="modal-body">
           
             <div class="form-group">
@@ -66,6 +66,12 @@ if(isset($_SESSION['error_room_delete']) && $_SESSION['error_room_delete'] !='')
 {
     echo '<h2 class="bg-danger text-white"> '.$_SESSION['error_room_delete'].' </h2>';
     unset($_SESSION['error_room_delete']);
+}
+
+if(isset($_SESSION['status']) && $_SESSION['status'] !='') 
+{
+    echo '<h2 class="bg-danger text-white"> '.$_SESSION['status'].' </h2>';
+    unset($_SESSION['status']);
 }
 
 ?>
